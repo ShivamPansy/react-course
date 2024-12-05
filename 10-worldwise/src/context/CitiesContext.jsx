@@ -65,18 +65,22 @@ function CitiesProvider({ children }) {
     fetchCities();
   }, []);
 
-  async function getCity(id) {
-    try {
-      dispatch({ type: "loaded" });
-      const res = await fetch(`${BASE_URL}/cities/${id}`);
-      const data = await res.json();
-      dispatch({ type: "cities/get", payload: data });
-    } catch {
-      alert("There was an error fetching cities");
-    } finally {
-      dispatch({ type: "unloaded" });
-    }
-  }
+  const getCity = useCallback(
+    async function getCity(id) {
+      if (Number(id) === currentCity.id) return;
+      try {
+        dispatch({ type: "loaded" });
+        const res = await fetch(`${BASE_URL}/cities/${id}`);
+        const data = await res.json();
+        dispatch({ type: "cities/get", payload: data });
+      } catch {
+        alert("There was an error fetching cities");
+      } finally {
+        dispatch({ type: "unloaded" });
+      }
+    },
+    [currentCity.id]
+  );
 
   async function createCity(newCity) {
     try {
